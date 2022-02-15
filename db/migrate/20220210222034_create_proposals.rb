@@ -5,6 +5,7 @@ class CreateProposals < ActiveRecord::Migration[6.0]
       t.date :deadline
       t.integer :status
       t.integer :project_id
+      t.integer :user_id
       
 
       t.timestamps

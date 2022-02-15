@@ -7,7 +7,7 @@ class CreateProjects < ActiveRecord::Migration[6.0]
       t.float :budget
       t.boolean :visibility
       t.integer :user_id
-
+      
       t.timestamps
     end
   end
