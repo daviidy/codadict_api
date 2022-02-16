@@ -10,6 +10,11 @@ gem 'sqlite3', '~> 1.4'
 # Use Puma as the app server
 gem 'puma', '~> 4.1'
 
+# Use ActiveModel has_secure_password
+gem 'bcrypt', '~> 3.1.7'
+
+gem 'jwt'
+
 group :development, :test do
   gem 'rspec-rails', '~> 3.5'
 end

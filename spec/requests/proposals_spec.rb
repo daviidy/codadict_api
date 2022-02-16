@@ -68,8 +68,8 @@ RSpec.describe 'Proposals API' do
     context 'when request attributes are valid' do
       before { post "/projects/#{project_id}/proposals", params: valid_attributes }
 
-      it 'returns status code 201' do
-        expect(response).to have_http_status(201)
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
       end
     end
 

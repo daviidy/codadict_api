@@ -15,7 +15,7 @@ class ProposalsController < ApplicationController
     # POST /projects/:project_id/proposals
     def create
         @proposal = @project.proposals.create!(proposal_params)
-        json_response(@proposal)
+        json_response(@project)
     end
 
     # PUT /projects/:project_id/proposals/:id
