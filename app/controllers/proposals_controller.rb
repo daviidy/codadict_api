@@ -14,7 +14,9 @@ class ProposalsController < ApplicationController
 
     # POST /projects/:project_id/proposals
     def create
-        @proposal = @project.proposals.create!(proposal_params)
+        @proposal = current_user.proposals.create!(proposal_params)
+        @proposal.project_id = @project.id
+        @proposal.save
         json_response(@project)
     end
 
@@ -33,7 +35,7 @@ class ProposalsController < ApplicationController
     private
 
     def proposal_params
-        params.permit(:price, :deadline)
+        params.permit(:price, :deadline, :project_id)
     end
 
     def set_project

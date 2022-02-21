@@ -3,4 +3,10 @@ Rails.application.routes.draw do
   resources :projects do
     resources :proposals
   end
+
+  post 'auth/login', to: 'authentication#authenticate'
+
+  post 'signup', to: 'users#create'
+
+  # get 'projects/all', to 'projects#all'
 end

@@ -2,14 +2,19 @@ require 'rails_helper'
 
 RSpec.describe 'Proposals API' do
   # Initialize the test data
-  let!(:project) { create(:project) }
-  let!(:proposals) { create_list(:proposal, 20, project_id: project.id) }
+  let(:user) { create(:user) }
+  
+  let(:project) { create(:project, user_id: user.id) }
+  let!(:proposals) { create_list(:proposal, 20, project_id: project.id, user_id: user.id) }
   let(:project_id) { project.id }
   let(:id) { proposals.first.id }
 
+  # authorize request
+  let(:headers) { valid_headers }
+
   # Test suite for GET /projects/:project_id/proposals
   describe 'GET /projects/:project_id/proposals' do
-    before { get "/projects/#{project_id}/proposals" }
+    before { get "/projects/#{project_id}/proposals", headers: headers }
 
     context 'when project exists' do
       it 'returns status code 200' do
@@ -36,7 +41,7 @@ RSpec.describe 'Proposals API' do
 
   # Test suite for GET /projects/:project_id/proposals/:id
   describe 'GET /projects/:project_id/proposals/:id' do
-    before { get "/projects/#{project_id}/proposals/#{id}" }
+    before { get "/projects/#{project_id}/proposals/#{id}", headers: headers }
 
     context 'when proposal exists' do
       it 'returns status code 200' do
@@ -63,10 +68,10 @@ RSpec.describe 'Proposals API' do
 
   # Test suite for POST /projects/:project_id/proposals
   describe 'POST /projects/:project_id/proposals' do
-    let(:valid_attributes) { { price: 2000, deadline: Date.today } }
+    let(:valid_attributes) { { price: 2000, deadline: Date.today, project_id: project_id }.to_json }
 
     context 'when request attributes are valid' do
-      before { post "/projects/#{project_id}/proposals", params: valid_attributes }
+      before { post "/projects/#{project_id}/proposals", params: valid_attributes, headers: headers }
 
       it 'returns status code 200' do
         expect(response).to have_http_status(200)
@@ -74,7 +79,7 @@ RSpec.describe 'Proposals API' do
     end
 
     context 'when an invalid request' do
-      before { post "/projects/#{project_id}/proposals", params: {} }
+      before { post "/projects/#{project_id}/proposals", params: {}, headers: headers }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -88,9 +93,9 @@ RSpec.describe 'Proposals API' do
 
   # Test suite for PUT /projects/:project_id/proposals/:id
   describe 'PUT /projects/:project_id/proposals/:id' do
-    let(:valid_attributes) { { price: 2500 } }
+    let(:valid_attributes) { { price: 2500 }.to_json }
 
-    before { put "/projects/#{project_id}/proposals/#{id}", params: valid_attributes }
+    before { put "/projects/#{project_id}/proposals/#{id}", params: valid_attributes, headers: headers }
 
     context 'when proposal exists' do
       it 'returns status code 204' do
@@ -118,7 +123,7 @@ RSpec.describe 'Proposals API' do
 
   # Test suite for DELETE /projects/:id
   describe 'DELETE /projects/:id' do
-    before { delete "/projects/#{project_id}/proposals/#{id}" }
+    before { delete "/projects/#{project_id}/proposals/#{id}", headers: headers }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)

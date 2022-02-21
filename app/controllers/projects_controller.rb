@@ -2,14 +2,19 @@ class ProjectsController < ApplicationController
     before_action :set_project, only: [:show, :update, :destroy]
 
     # GET /projects
+    # def all
+    #     @projects = Project.all
+    #     json_response(@projects)
+    # end
+
     def index
-        @projects = Project.all
+        @projects = current_user.projects
         json_response(@projects)
     end
 
     # POST /projects
     def create
-        @project = Project.create!(project_params)
+        @project = current_user.projects.create!(project_params)
         json_response(@project, :created)
     end
 
