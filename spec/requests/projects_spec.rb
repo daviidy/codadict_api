@@ -4,8 +4,13 @@ RSpec.describe 'Projects API', type: :request do
   # initialize test data
   let(:user) { create(:user) }
 
+  let!(:categories) { create_list(:category, 10) }
+  let(:category_id) { categories.first.id }
   let!(:projects) { create_list(:project, 10, user_id: user.id) }
+  let(:project) { projects.first }
+  let(:category) { categories.first }
   let(:project_id) { projects.first.id }
+
 
   # authorize request
   let(:headers) { valid_headers }
@@ -20,6 +25,44 @@ RSpec.describe 'Projects API', type: :request do
       # Note `json` is a custom helper to parse JSON responses
       expect(json).not_to be_empty
       expect(json.size).to eq(10)
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
+
+  # Test suite for GET /myèprojects
+  describe 'GET /my-projects' do
+    # make HTTP get request before each example
+    before { get '/my-projects', params: {}, headers: headers }
+
+    it 'returns user projects' do
+      # Note `json` is a custom helper to parse JSON responses
+      expect(json).not_to be_empty
+      expect(json.size).to eq(10)
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
+
+   # Test suite for GET /categories/id/projects
+  describe 'GET /categories/:id/projects' do
+    before(:all) do
+      @user = create(:user)
+      @category = create(:category)
+      @project = create(:project, user_id: @user.id)
+      @project.categories << @category
+    end
+    # make HTTP get request before each example
+    before { get "/categories/#{@category.id}/projects", params: {}, headers: headers }
+
+    it 'returns projects per category' do
+      # Note `json` is a custom helper to parse JSON responses
+      expect(json).not_to be_empty
+      expect(json.size).to eq(1)
     end
 
     it 'returns status code 200' do
@@ -58,7 +101,12 @@ RSpec.describe 'Projects API', type: :request do
   # Test suite for POST /projects
   describe 'POST /projects' do
     # valid payload
-    let(:valid_attributes) {{ title: 'Project Euler', description: 'any description', budget: 2500 }.to_json}
+    let(:valid_attributes) {{ 
+      title: 'Project Euler', 
+      description: 'any description', 
+      budget: 2500,
+      category_ids: [category_id]
+    }.to_json}
     let(:invalid_attributes) {{ title: 'Project Euler' }.to_json}
 
     context 'when the request is valid' do

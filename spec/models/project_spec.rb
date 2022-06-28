@@ -4,6 +4,7 @@ RSpec.describe Project, type: :model do
   # Association test
   # ensure Todo model has a 1:m relationship with the Item model
   it { should have_many(:proposals).dependent(:destroy) }
+  it { should have_many(:categories) }
   it { should belong_to(:user) }
   # Validation tests
   # ensure columns title and created_by are present before saving

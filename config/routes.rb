@@ -3,10 +3,16 @@ Rails.application.routes.draw do
   resources :projects do
     resources :proposals
   end
+  resources :categories
+  
+  get 'categories/:id/projects', to: 'categories#projects'
+  get 'my-projects', to: 'projects#myProjects'
 
   post 'auth/login', to: 'authentication#authenticate'
 
   post 'signup', to: 'users#create'
+
+
 
   # get 'projects/all', to 'projects#all'
 end

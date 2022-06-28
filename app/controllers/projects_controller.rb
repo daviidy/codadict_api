@@ -1,5 +1,6 @@
 class ProjectsController < ApplicationController
     before_action :set_project, only: [:show, :update, :destroy]
+    before_action :authorize_request, except: [:index, :show]
 
     # GET /projects
     # def all
@@ -8,13 +9,22 @@ class ProjectsController < ApplicationController
     # end
 
     def index
-        @projects = current_user.projects
+        @projects = Project.all
         json_response(@projects)
+    end
+
+    def myProjects
+        json_response(current_user.projects)
     end
 
     # POST /projects
     def create
+        # @project = current_user.projects.create!(project_params)
         @project = current_user.projects.create!(project_params)
+        params[:category_ids].each do |i|
+            @category = Category.find(i)
+            @project.categories << @category
+        end
         json_response(@project, :created)
     end
 
@@ -39,7 +49,7 @@ class ProjectsController < ApplicationController
 
     def project_params
         # whitelist params
-        params.permit(:title, :description, :budget)
+        params.require(:project).permit(:title, :description, :budget, category_ids: [] )
     end
 
     def set_project
